@@ -1370,12 +1370,14 @@ function _neutron_configure_router_v4 {
             local testcmd="ip -o link | grep -q $ext_gw_interface"
             test_with_retry "$testcmd" "$ext_gw_interface creation failed"
             if [[ $(ip addr show dev $ext_gw_interface | grep -c $ext_gw_ip) == 0 && ( $Q_USE_PROVIDERNET_FOR_PUBLIC == "False" || $Q_USE_PUBLIC_VETH == "True" ) ]]; then
-                sudo ip addr add $ext_gw_ip/$cidr_len dev $ext_gw_interface
+                echo *** SKIPPING SETTING OF IP ADDR ON $ext_gw_inerface ***
+                #sudo ip addr add $ext_gw_ip/$cidr_len dev $ext_gw_interface
                 sudo ip link set $ext_gw_interface up
             fi
             ROUTER_GW_IP=`neutron port-list -c fixed_ips -c device_owner | grep router_gateway | awk -F'ip_address'  '{ print $2 }' | cut -f3 -d\" | tr '\n' ' '`
             die_if_not_set $LINENO ROUTER_GW_IP "Failure retrieving ROUTER_GW_IP"
-            sudo ip route replace  $FIXED_RANGE via $ROUTER_GW_IP
+            echo *** SKIPPING ROUTE REPLACE FOR FIXED_RANGE $FIXED_RANGE ***
+            #sudo ip route replace  $FIXED_RANGE via $ROUTER_GW_IP
         fi
         _neutron_set_router_id
     fi
